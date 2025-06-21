@@ -4,6 +4,12 @@
   padding: 2rem;
   text-align: center;
 }
+.body {
+background: #f0f0f0;
+  color: #333;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+}
 
 .logo {
   height: 6em;

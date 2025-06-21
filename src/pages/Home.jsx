@@ -5,36 +5,42 @@ import { useNavigate } from "react-router-dom";
 const Home = () => {
   const textRef = useRef(null);
   const subTextRef = useRef(null);
-  const navigate = useNavigate();
   const cursorRef = useRef(null);
+  const navigate = useNavigate();
   const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
-    // GSAP Animation for the "BUILD UR CV" text
-    gsap.fromTo(
-      textRef.current,
-      { y: "-100%", opacity: 0 },
-      {
-        y: "0%",
-        opacity: 1,
-        duration: 1.5,
-        ease: "elastic.out(1, 0.6)",
-        delay: 0.5,
+    const ctx = gsap.context(() => {
+      // Header text animation
+      if (textRef.current) {
+        gsap.fromTo(
+          textRef.current,
+          { y: "-100%", opacity: 0 },
+          {
+            y: "0%",
+            opacity: 1,
+            duration: 1.5,
+            ease: "elastic.out(1, 0.6)",
+            delay: 0.5,
+          }
+        );
       }
-    );
 
-    // GSAP Animation for subtext
-    gsap.fromTo(
-      subTextRef.current,
-      { opacity: 0, scale: 0.5 },
-      {
-        opacity: 1,
-        scale: 1,
-        duration: 1,
-        ease: "power2.out",
-        delay: 1.5,
+      // Subtext animation
+      if (subTextRef.current) {
+        gsap.fromTo(
+          subTextRef.current,
+          { opacity: 0, scale: 0.5 },
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 1,
+            ease: "power2.out",
+            delay: 1.5,
+          }
+        );
       }
-    );
+    });
 
     // Cursor movement tracking
     const moveCursor = (e) => {
@@ -49,23 +55,25 @@ const Home = () => {
     window.addEventListener("mousemove", moveCursor);
 
     return () => {
+      ctx.revert(); // Cleanup GSAP context
       window.removeEventListener("mousemove", moveCursor);
     };
   }, []);
 
   return (
     <div className="h-screen bg-gradient-to-br from-purple-800 via-pink-600 to-yellow-500 flex justify-center items-center text-white relative overflow-hidden">
+      {/* Cursor Effect */}
       <div
         ref={cursorRef}
-        className={`fixed top-0 left-0 w-10 h-10 rounded-full bg-pink-400 opacity-0 pointer-events-none transition-transform ${
+        className={`fixed top-0 left-0 w-10 h-10 rounded-full bg-pink-400 mix-blend-difference pointer-events-none ${
           isHovering ? "opacity-100 scale-125" : "opacity-50 scale-1"
         }`}
         style={{
           transform: "translate(-50%, -50%)",
-          mixBlendMode: "difference",
         }}
       ></div>
 
+      {/* Main Content */}
       <div className="text-center">
         <h1
           ref={textRef}
@@ -73,11 +81,11 @@ const Home = () => {
           onMouseEnter={() =>
             gsap.to(textRef.current, {
               scale: 1.1,
-              textShadow: "0 0 20px rgba(255,255,255,0.6)",
+              duration: 0.3,
             })
           }
           onMouseLeave={() =>
-            gsap.to(textRef.current, { scale: 1, textShadow: "none" })
+            gsap.to(textRef.current, { scale: 1, duration: 0.3 })
           }
         >
           BUILD UR CV
@@ -85,16 +93,17 @@ const Home = () => {
 
         <p
           ref={subTextRef}
-          className="mt-6 text-xl md:text-2xl font-medium opacity-90 font-bold"
+          className="mt-6 text-xl md:text-2xl font-medium opacity-90 "
           onMouseEnter={() =>
-            gsap.to(subTextRef.current, { color: "#7851AE", scale: 1.5 })
+            gsap.to(subTextRef.current, { scale: 1.2, duration: 0.3 })
           }
           onMouseLeave={() =>
-            gsap.to(subTextRef.current, { color: "white", scale: 1 })
+            gsap.to(subTextRef.current, { scale: 1, duration: 0.3 })
           }
         >
           Build your resume quickly and easily with our CV builder.
         </p>
+
         <div className="mt-10">
           <button
             onMouseEnter={() => setIsHovering(true)}

@@ -1,22 +1,25 @@
 import React from "react";
+import bold from "./assets/images/bold.png";
 import classic from "./assets/images/classic.png";
 import modern from "./assets/images/modern.png";
 import vibrant from "./assets/images/vibrant.png";
-import bold from "./assets/images/bold.png";
+import CreativeMinimalistTemplate from "./Templates/ElegantTemplate";
 
 const Sidebar = ({ selectedTemplate, setSelectedTemplate }) => {
   const templates = [
+    { id: "bold", label: "Bold", image: bold },
     { id: "classic", label: "Classic", image: classic },
     { id: "modern", label: "Modern", image: modern },
     { id: "vibrant", label: "Vibrant", image: vibrant },
-    { id: "bold", label: "Bold", image: bold },
+    { id: "elegant", label: "elegant", image: bold },
+    // { id: "Newww", label: "Newwwww", image: modern },
   ];
 
   // Find selected template data
   const selectedTemplateData = templates.find((t) => t.id === selectedTemplate);
 
   return (
-    <aside className="w-1/4 bg-gradient-to-br from-gray-900 to-green-600 p-6 rounded-xl shadow-2xl">
+    <aside className="w-1/4 bg-gradient-to-br from-gray-900 to-amber-50 p-6 rounded-tr-xl shadow-2xl">
       <h2 className="text-2xl font-bold mb-6 text-white text-center">
         Choose Your Template
       </h2>

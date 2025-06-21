@@ -1,174 +1,332 @@
 import React from "react";
-import PropTypes from "prop-types";
-import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import {
+  Page,
+  Text,
+  View,
+  Document,
+  StyleSheet,
+  Image,
+  Font,
+} from "@react-pdf/renderer";
 
-// Define Styles
+// Import the gradient image
+import gradientBackground from "./../assets/images/gradient.png";
+
+// Define styles for the PDF
 const styles = StyleSheet.create({
   page: {
-    padding: 40,
-    fontSize: 12,
+    flexDirection: "row",
+    fontSize: 10,
     fontFamily: "Helvetica",
-    color: "#333",
-    backgroundColor: "#F5F7FA",
+    backgroundColor: "#f4f6f9",
+    padding: 10,
   },
-  header: {
-    textAlign: "center",
-    paddingBottom: 20,
-    borderBottomWidth: 3,
-    borderBottomColor: "#FF6600",
+  sidebar: {
+    width: "40%",
+    padding: 6,
+    color: "#ffffff",
+    borderBottomLeftRadius: 15,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    gap: "5px",
+    position: "relative", // Needed for absolute positioning of the background image
+  },
+  sidebarBackground: {
+    position: "absolute",
+    borderRadius: 10,
+
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    zIndex: -1, // Ensure the background is behind the content
+  },
+  main: {
+    width: "60%",
+    padding: 30,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    boxShadow: "5px 5px 15px rgba(0, 0, 0, 0.1)",
+  },
+  profileImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    alignSelf: "center",
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: "#ffffff",
+    boxShadow: "2px 2px 10px rgba(0, 0, 0, 0.3)",
   },
   name: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#003366",
-    textTransform: "uppercase",
-  },
-  role: {
-    fontSize: 14,
-    color: "#666",
-    marginTop: 5,
-  },
-  section: {
-    marginTop: 20,
-    padding: 10,
-    borderRadius: 5,
-    backgroundColor: "#FFFFFF",
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 8,
-    color: "#FF6600",
-    textTransform: "uppercase",
-    borderBottomWidth: 2,
-    borderBottomColor: "#FF6600",
-    paddingBottom: 3,
-  },
-  text: {
-    marginBottom: 4,
-    lineHeight: 1.5,
-    color: "#333",
+    color: "#ffffff",
   },
   jobTitle: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#003366",
+    fontSize: 16,
+    textAlign: "center",
+    color: "#ecf0f1",
+    marginBottom: 2,
   },
-  company: {
-    fontSize: 12,
+  sectionTitle: {
+    fontSize: 18,
     fontWeight: "bold",
-    color: "#666",
+    marginBottom: 10,
+    color: "#2980b9",
+    borderBottomWidth: 2,
+    borderBottomColor: "#2980b9",
+    paddingBottom: 5,
   },
-  duration: {
+  sidebarTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: "#ffffff",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ffffff",
+    paddingBottom: 5,
+  },
+  contactInfo: {
     fontSize: 12,
+    marginBottom: 4,
+    color: "#ecf0f1",
     fontStyle: "italic",
-    color: "#777",
   },
-  bulletList: {
-    marginTop: 4,
-    paddingLeft: 10,
+  socialLink: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
   },
-  bulletItem: {
+  icon: {
+    marginRight: 8,
+  },
+  skillBadge: {
+    backgroundColor: "#34495e",
+    color: "#ffffff",
     fontSize: 12,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 15,
+    marginBottom: 8,
+    alignSelf: "flex-start",
+    boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+  },
+  gridContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+  },
+  gridItem: {
+    backgroundColor: "#34495e",
+    color: "#ffffff",
+    fontSize: 12,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 15,
+    marginBottom: 8,
+    boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+  },
+  listItem: {
+    fontSize: 12,
+    marginBottom: 8,
+    color: "#ecf0f1",
+  },
+  workExperienceTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 6,
+    color: "#2c3e50",
+  },
+  workExperienceSubtitle: {
+    fontSize: 14,
+    fontStyle: "italic",
+    marginBottom: 8,
+    color: "#7f8c8d",
+  },
+  achievement: {
+    flexDirection: "row",
+    marginBottom: 8,
+    alignItems: "center",
+  },
+  achievementBullet: {
+    width: 5,
+    height: 5,
+    backgroundColor: "#2980b9",
+    marginRight: 8,
+    borderRadius: 2.5,
+  },
+  achievementText: {
+    fontSize: 12,
+    flexShrink: 1,
+    color: "#2c3e50",
+  },
+  description: {
+    fontSize: 12,
+    marginBottom: 15,
     lineHeight: 1.5,
+    color: "#2c3e50",
+  },
+  aboutMe: {
+    fontSize: 12,
+    marginBottom: 15,
+    lineHeight: 1.5,
+    color: "#2c3e50",
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#e0e0e0",
+    marginVertical: 15,
   },
 });
 
-// Chronological Resume Template
-const ChronologicalTemplate = ({ data }) => {
-  // Ensure arrays exist
-  const education = data.education || [];
-  const experience = data.experience ? [...data.experience].reverse() : []; // Reverse for chronological order
-  const skills = data.skills || [];
+Font.register({
+  family: "Helvetica",
+});
+
+const ModernCVTemplate = ({ data }) => {
+  const {
+    personalInfo,
+    experience,
+    education,
+    lists: { skills, interests, languages, conferences, courses },
+  } = data;
 
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {/* Header Section */}
-        <View style={styles.header}>
-          <Text style={styles.name}>{data.fullName || "Your Name"}</Text>
-          <Text style={styles.role}>{data.role || "Your Job Title"}</Text>
-        </View>
+        {/* Left Sidebar */}
+        <View style={styles.sidebar}>
+          {/* Gradient Background */}
+          <Image src={gradientBackground} style={styles.sidebarBackground} />
 
-        {/* Contact Information */}
-        <View style={styles.section}>
-          <Text style={styles.title}>Contact Information</Text>
-          <Text style={styles.text}>
-            Email: {data.email || "example@domain.com"}
-          </Text>
-          <Text style={styles.text}>Phone: {data.phone || "+00 000 0000"}</Text>
-          <Text style={styles.text}>
-            LinkedIn: {data.linkedin || "linkedin.com"}
-          </Text>
-          <Text style={styles.text}>GitHub: {data.github || "github.com"}</Text>
-          <Text style={styles.text}>
-            Address: {data.address || "Your Address"}
-          </Text>
-        </View>
-
-        {/* Work Experience (Most Important Section) */}
-        <View style={styles.section}>
-          <Text style={styles.title}>Work Experience</Text>
-          {experience.length > 0 ? (
-            experience.map((exp, index) => (
-              <View key={index} style={{ marginBottom: 10 }}>
-                <Text style={styles.jobTitle}>{exp.jobTitle}</Text>
-                <Text style={styles.company}>{exp.company}</Text>
-                <Text style={styles.duration}>{exp.duration}</Text>
-                {exp.responsibilities && exp.responsibilities.length > 0 && (
-                  <View style={styles.bulletList}>
-                    {exp.responsibilities.map((resp, idx) => (
-                      <Text key={idx} style={styles.bulletItem}>
-                        • {resp}
-                      </Text>
-                    ))}
-                  </View>
-                )}
-              </View>
-            ))
-          ) : (
-            <Text style={styles.text}>No work experience provided.</Text>
+          {/* Profile Picture */}
+          {personalInfo.profilePicture && (
+            <Image
+              src={personalInfo.profilePicture}
+              style={styles.profileImage}
+            />
           )}
-        </View>
 
-        {/* Education Section */}
-        <View style={styles.section}>
-          <Text style={styles.title}>Education</Text>
-          {education.length > 0 ? (
-            education.map((edu, index) => (
-              <View key={index} style={{ marginBottom: 6 }}>
-                <Text style={styles.jobTitle}>{edu.degree}</Text>
-                <Text style={styles.company}>{edu.institution}</Text>
-                <Text style={styles.duration}>{edu.graduationYear}</Text>
-              </View>
-            ))
-          ) : (
-            <Text style={styles.text}>No education details provided.</Text>
-          )}
-        </View>
+          {/* Name and Job Title */}
+          <Text style={styles.name}>{personalInfo.fullName}</Text>
+          <Text style={styles.jobTitle}>{personalInfo.jobTitle}</Text>
 
-        {/* Skills Section */}
-        <View style={styles.section}>
-          <Text style={styles.title}>Skills</Text>
-          {skills.length > 0 ? (
-            skills.map((skill, index) => (
-              <Text key={index} style={styles.text}>
-                • {skill}
+          {/* Contact Info */}
+          <Text style={styles.sidebarTitle}>Contact</Text>
+          <Text style={styles.contactInfo}>{personalInfo.email}</Text>
+          <Text style={styles.contactInfo}>{personalInfo.phone}</Text>
+          <Text style={styles.contactInfo}>{personalInfo.address}</Text>
+
+          {/* Social Links */}
+          <View style={styles.socialLink}>
+            <Text style={styles.contactInfo}>{personalInfo.linkedin}</Text>
+          </View>
+          <View style={styles.socialLink}>
+            <Text style={styles.contactInfo}>{personalInfo.github}</Text>
+          </View>
+          <View style={styles.socialLink}>
+            <Text style={styles.contactInfo}>{personalInfo.website}</Text>
+          </View>
+
+          {/* Divider */}
+          <View style={styles.divider} />
+
+          {/* Skills */}
+          <Text style={styles.sidebarTitle}>Skills</Text>
+          <View style={styles.gridContainer}>
+            {skills.map((skill, index) => (
+              <Text key={index} style={styles.gridItem}>
+                {skill}
               </Text>
-            ))
-          ) : (
-            <Text style={styles.text}>No skills provided.</Text>
-          )}
+            ))}
+          </View>
+
+          {/* Divider */}
+          <View style={styles.divider} />
+
+          {/* Languages */}
+          <Text style={styles.sidebarTitle}>Languages</Text>
+          <View style={styles.gridContainer}>
+            {languages.map((language, index) => (
+              <Text key={index} style={styles.gridItem}>
+                {language}
+              </Text>
+            ))}
+          </View>
+        </View>
+
+        {/* Right Main Content */}
+        <View style={styles.main}>
+          {/* Summary */}
+          <Text style={styles.sectionTitle}>Summary</Text>
+          <Text style={styles.description}>{personalInfo.description}</Text>
+
+          {/* Divider */}
+          <View style={styles.divider} />
+
+          {/* Experience */}
+          <Text style={styles.sectionTitle}>Experience</Text>
+          {experience.map((exp, index) => (
+            <View key={index} style={styles.achievement}>
+              <View style={styles.achievementBullet} />
+              <View>
+                <Text style={styles.workExperienceTitle}>{exp.jobTitle}</Text>
+                <Text style={styles.workExperienceSubtitle}>
+                  {exp.company} | {exp.duration}
+                </Text>
+                <Text style={styles.achievementText}>{exp.description}</Text>
+              </View>
+            </View>
+          ))}
+
+          {/* Divider */}
+          <View style={styles.divider} />
+
+          {/* Education */}
+          <Text style={styles.sectionTitle}>Education</Text>
+          {education.map((edu, index) => (
+            <View key={index} style={styles.achievement}>
+              <View style={styles.achievementBullet} />
+              <View>
+                <Text style={styles.workExperienceTitle}>{edu.degree}</Text>
+                <Text style={styles.workExperienceSubtitle}>
+                  {edu.institution} | {edu.graduationYear}
+                </Text>
+              </View>
+            </View>
+          ))}
+
+          {/* Divider */}
+          <View style={styles.divider} />
+
+          {/* Certifications */}
+          <Text style={styles.sectionTitle}>Certifications</Text>
+          {courses.map((course, index) => (
+            <View key={index} style={styles.achievement}>
+              <View style={styles.achievementBullet} />
+              <Text style={styles.achievementText}>{course}</Text>
+            </View>
+          ))}
+
+          {/* Divider */}
+          <View style={styles.divider} />
+
+          {/* Hobbies */}
+          <Text style={styles.sectionTitle}>Interest</Text>
+          {interests.map((interest, index) => (
+            <View key={index} style={styles.achievement}>
+              <View style={styles.achievementBullet} />
+              <Text style={styles.achievementText}>{interest}</Text>
+            </View>
+          ))}
         </View>
       </Page>
     </Document>
   );
 };
 
-// Define PropTypes
-ChronologicalTemplate.propTypes = {
-  data: PropTypes.object.isRequired,
-};
-
-// Export Component
-export default ChronologicalTemplate;
+export default ModernCVTemplate;

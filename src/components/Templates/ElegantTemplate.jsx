@@ -1,94 +1,154 @@
 import React from "react";
-import PropTypes from "prop-types";
-import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import {
+  Page,
+  Text,
+  View,
+  Document,
+  StyleSheet,
+  Font,
+} from "@react-pdf/renderer";
 
-const ElegantTemplate = ({ data }) => {
-  const styles = StyleSheet.create({
-    page: {
-      padding: 50,
-      fontSize: 12,
-      fontFamily: "Times-Roman",
-      color: "#2c3e50",
-      backgroundColor: "#ecf0f1",
-    },
-    header: {
-      fontSize: 30,
-      marginBottom: 15,
-      textAlign: "center",
-      fontWeight: "bold",
-      color: "#34495e",
-    },
-    section: {
-      marginBottom: 20,
-      padding: 10,
-      borderLeft: "5px solid #3498db",
-      backgroundColor: "#fff",
-    },
-    title: {
-      fontSize: 18,
-      fontWeight: "bold",
-      marginBottom: 8,
-      color: "#3498db",
-    },
-    text: {
-      marginBottom: 6,
-      lineHeight: 1.5,
-    },
-  });
+// Register fonts (optional, for custom typography)
+Font.register({
+  family: "Montserrat",
+  fonts: [
+    {
+      src: "https://fonts.gstatic.com/s/montserrat/v15/JTUSjIg1_i6t8kCHKm459Wlhzg.ttf",
+    }, // Regular
+    {
+      src: "https://fonts.gstatic.com/s/montserrat/v15/JTURjIg1_i6t8kCHKm45_dJE3gnD-w.ttf",
+      fontWeight: 600,
+    }, // Bold
+  ],
+});
 
-  return (
-    <Document>
-      <Page size="A4" style={styles.page}>
-        <View style={styles.header}>
-          <Text>{data.fullName || "Your Name"}</Text>
+const styles = StyleSheet.create({
+  page: {
+    padding: 40,
+    fontSize: 12,
+    lineHeight: 1.5,
+    backgroundColor: "#f0f4f8", // Light mint green
+    fontFamily: "Montserrat",
+  },
+  header: {
+    marginBottom: 30,
+    paddingBottom: 20,
+    borderBottom: "2px solid #ff6f61", // Coral accent
+  },
+  name: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#2c3e50", // Dark gray
+  },
+  contact: {
+    marginTop: 10,
+    color: "#4a5568", // Gray
+  },
+  icon: {
+    marginRight: 5,
+  },
+  section: {
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#ff6f61", // Coral accent
+    marginBottom: 10,
+  },
+  item: {
+    marginBottom: 15,
+  },
+  itemTitle: {
+    fontWeight: "bold",
+    color: "#2c3e50", // Dark gray
+  },
+  itemSubtitle: {
+    color: "#4a5568", // Gray
+  },
+  list: {
+    marginLeft: 10,
+  },
+  listItem: {
+    marginBottom: 5,
+    color: "#2c3e50", // Dark gray
+  },
+});
+
+const CreativeMinimalistTemplate = ({ data }) => (
+  <Document>
+    <Page size="A4" style={styles.page}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.name}>{data.personalInfo.fullName}</Text>
+        <View style={styles.contact}>
+          <Text>
+            <Text style={styles.icon}>📧</Text> {data.personalInfo.email}
+          </Text>
+          <Text>
+            <Text style={styles.icon}>📞</Text> {data.personalInfo.phone}
+          </Text>
+          <Text>
+            <Text style={styles.icon}>📍</Text> {data.personalInfo.address}
+          </Text>
+          <Text>
+            <Text style={styles.icon}>🔗</Text> {data.personalInfo.linkedin}
+          </Text>
+          <Text>
+            <Text style={styles.icon}>🐱</Text> {data.personalInfo.github}
+          </Text>
         </View>
-        <View style={styles.section}>
-          <Text style={styles.title}>Contact Details</Text>
-          <Text>Email: {data.email || "example@domain.com"}</Text>
-          <Text>Phone: {data.phone || "+00 000 0000"}</Text>
-          <Text>LinkedIn: {data.linkedin || "linkedin.com"}</Text>
-          <Text>GitHub: {data.github || "github.com"}</Text>
-          <Text>Address: {data.address || "Your Address"}</Text>
-        </View>
-        <View style={styles.section}>
-          <Text style={styles.title}>Education</Text>
-          {data.education.map((edu, index) => (
-            <Text key={index} style={styles.text}>
-              {edu.degree} from {edu.institution} ({edu.graduationYear})
-            </Text>
-          ))}
-        </View>
-        <View style={styles.section}>
-          <Text style={styles.title}>Professional Experience</Text>
-          {data.experience.map((exp, index) => (
-            <Text key={index} style={styles.text}>
-              {exp.jobTitle} at {exp.company} ({exp.duration})
-            </Text>
-          ))}
-        </View>
-        <View style={styles.section}>
-          <Text style={styles.title}>Skills</Text>
-          {data.skills.map((skill, index) => (
-            <Text key={index} style={styles.text}>
+      </View>
+
+      {/* Experience */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Experience</Text>
+        {data.experience.map((exp, index) => (
+          <View key={index} style={styles.item}>
+            <Text style={styles.itemTitle}>{exp.jobTitle}</Text>
+            <Text style={styles.itemSubtitle}>{exp.company}</Text>
+            <Text style={styles.itemSubtitle}>{exp.duration}</Text>
+          </View>
+        ))}
+      </View>
+
+      {/* Education */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Education</Text>
+        {data.education.map((edu, index) => (
+          <View key={index} style={styles.item}>
+            <Text style={styles.itemTitle}>{edu.degree}</Text>
+            <Text style={styles.itemSubtitle}>{edu.institution}</Text>
+            <Text style={styles.itemSubtitle}>{edu.graduationYear}</Text>
+          </View>
+        ))}
+      </View>
+
+      {/* Skills */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Skills</Text>
+        <View style={styles.list}>
+          {data.lists.skills.map((skill, index) => (
+            <Text key={index} style={styles.listItem}>
               • {skill}
             </Text>
           ))}
         </View>
-        <View style={styles.section}>
-          <Text style={styles.title}>Interests</Text>
-          {data.interests.map((interest, index) => (
-            <Text key={index} style={styles.text}>
-              • {interest}
+      </View>
+
+      {/* Languages */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Languages</Text>
+        <View style={styles.list}>
+          {data.lists.languages.map((lang, index) => (
+            <Text key={index} style={styles.listItem}>
+              • {lang}
             </Text>
           ))}
         </View>
-      </Page>
-    </Document>
-  );
-};
+      </View>
+    </Page>
+  </Document>
+);
 
-ElegantTemplate.propTypes = {
-  data: PropTypes.object.isRequired,
-};
-
-export default ElegantTemplate;
+export default CreativeMinimalistTemplate;
