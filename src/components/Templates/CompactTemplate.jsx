@@ -4,148 +4,171 @@ import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 const styles = StyleSheet.create({
   page: {
     flexDirection: 'column',
-    fontSize: 11,
+    fontSize: 10,
     fontFamily: 'Helvetica',
     backgroundColor: '#ffffff',
-    padding: 40,
+    padding: 25,
   },
   header: {
-    textAlign: 'center',
-    marginBottom: 30,
-    paddingBottom: 20,
+    marginBottom: 20,
+    paddingBottom: 15,
     borderBottomWidth: 2,
-    borderBottomColor: '#000000',
+    borderBottomColor: '#8e44ad',
   },
   name: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 8,
-    textTransform: 'uppercase',
-    letterSpacing: 2,
+    color: '#2c3e50',
+    marginBottom: 5,
   },
   jobTitle: {
-    fontSize: 14,
-    color: '#333333',
-    marginBottom: 15,
-    fontStyle: 'italic',
+    fontSize: 12,
+    color: '#8e44ad',
+    marginBottom: 10,
+    fontWeight: 'bold',
   },
   contactRow: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 15,
-    fontSize: 11,
-    color: '#333333',
+    justifyContent: 'space-between',
+    fontSize: 9,
+    color: '#34495e',
+  },
+  summary: {
+    fontSize: 10,
+    color: '#34495e',
+    lineHeight: 1.4,
+    marginBottom: 15,
+    textAlign: 'justify',
+  },
+  mainLayout: {
+    flexDirection: 'row',
+    gap: 20,
+  },
+  leftColumn: {
+    width: '70%',
+  },
+  rightColumn: {
+    width: '30%',
   },
   section: {
-    marginBottom: 25,
+    marginBottom: 15,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 15,
+    color: '#8e44ad',
+    marginBottom: 8,
     textTransform: 'uppercase',
-    letterSpacing: 1,
-    borderBottomWidth: 1,
-    borderBottomColor: '#333333',
-    paddingBottom: 5,
-  },
-  description: {
-    fontSize: 11,
-    color: '#333333',
-    lineHeight: 1.6,
-    textAlign: 'justify',
-    marginBottom: 15,
+    letterSpacing: 0.5,
   },
   experienceItem: {
-    marginBottom: 20,
-    paddingBottom: 15,
+    marginBottom: 12,
+    paddingBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#eeeeee',
+    borderBottomColor: '#ecf0f1',
   },
   experienceHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 3,
   },
   jobTitleText: {
-    fontSize: 13,
+    fontSize: 11,
     fontWeight: 'bold',
-    color: '#000000',
+    color: '#2c3e50',
   },
   company: {
-    fontSize: 12,
-    color: '#333333',
-    marginBottom: 8,
+    fontSize: 10,
+    color: '#8e44ad',
+    marginBottom: 5,
     fontWeight: 'bold',
   },
   duration: {
-    fontSize: 10,
-    color: '#666666',
+    fontSize: 9,
+    color: '#7f8c8d',
     fontStyle: 'italic',
   },
+  description: {
+    fontSize: 9,
+    color: '#34495e',
+    lineHeight: 1.3,
+  },
   educationItem: {
-    marginBottom: 15,
+    marginBottom: 10,
   },
   degree: {
-    fontSize: 13,
+    fontSize: 10,
     fontWeight: 'bold',
-    color: '#000000',
+    color: '#2c3e50',
   },
   institution: {
-    fontSize: 11,
-    color: '#333333',
+    fontSize: 9,
+    color: '#7f8c8d',
   },
   skillsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    gap: 5,
   },
-  skillItem: {
-    fontSize: 11,
-    color: '#333333',
-    paddingHorizontal: 8,
+  skillChip: {
+    backgroundColor: '#8e44ad',
+    color: '#ffffff',
+    fontSize: 8,
     paddingVertical: 3,
-    borderWidth: 1,
-    borderColor: '#333333',
-    borderRadius: 0,
+    paddingHorizontal: 6,
+    borderRadius: 8,
+    marginBottom: 3,
+  },
+  rightSectionTitle: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#8e44ad',
+    marginBottom: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 0.3,
   },
   listItem: {
-    fontSize: 11,
-    color: '#333333',
-    marginBottom: 8,
-    paddingLeft: 15,
+    fontSize: 9,
+    color: '#34495e',
+    marginBottom: 4,
+    paddingLeft: 5,
   },
-  bullet: {
-    fontSize: 11,
-    color: '#333333',
-    marginRight: 8,
+  compactCard: {
+    backgroundColor: '#f8f9fa',
+    padding: 8,
+    marginBottom: 10,
+    borderRadius: 4,
+    borderLeftWidth: 3,
+    borderLeftColor: '#8e44ad',
   },
-  twoColumn: {
+  languageItem: {
     flexDirection: 'row',
-    gap: 30,
+    justifyContent: 'space-between',
+    marginBottom: 4,
   },
-  leftColumn: {
-    width: '65%',
+  languageName: {
+    fontSize: 9,
+    color: '#34495e',
   },
-  rightColumn: {
-    width: '35%',
+  languageLevel: {
+    fontSize: 8,
+    color: '#7f8c8d',
+    fontStyle: 'italic',
   },
 });
 
-const ClassicTemplate = ({ data = {} }) => {
+const CompactTemplate = ({ data = {} }) => {
   const mappedData = {
     fullName: data.personalInfo?.fullName || 'Your Name',
     jobTitle: data.personalInfo?.jobTitle || 'Professional Title',
     email: data.personalInfo?.email || 'email@example.com',
     phone: data.personalInfo?.phone || '(000) 000-0000',
-    address: data.personalInfo?.address || 'Your Address',
+    address: data.personalInfo?.address || 'Location',
     linkedin: data.personalInfo?.linkedin || 'linkedin.com/in/profile',
     description:
       data.personalInfo?.description ||
-      'Professional summary highlighting your experience and qualifications.',
+      'Efficient professional with strong results and proven track record.',
     skills: data.lists?.skills || [],
     experience: data.experience || [],
     education: data.education || [],
@@ -163,28 +186,22 @@ const ClassicTemplate = ({ data = {} }) => {
           <Text style={styles.jobTitle}>{mappedData.jobTitle}</Text>
           <View style={styles.contactRow}>
             <Text>{mappedData.email}</Text>
-            <Text>•</Text>
             <Text>{mappedData.phone}</Text>
-            <Text>•</Text>
             <Text>{mappedData.address}</Text>
-            <Text>•</Text>
             <Text>{mappedData.linkedin}</Text>
           </View>
         </View>
 
-        {/* Professional Summary */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Professional Summary</Text>
-          <Text style={styles.description}>{mappedData.description}</Text>
-        </View>
+        {/* Summary */}
+        <Text style={styles.summary}>{mappedData.description}</Text>
 
-        {/* Two Column Layout */}
-        <View style={styles.twoColumn}>
+        {/* Main Content */}
+        <View style={styles.mainLayout}>
           {/* Left Column */}
           <View style={styles.leftColumn}>
-            {/* Professional Experience */}
+            {/* Experience */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Professional Experience</Text>
+              <Text style={styles.sectionTitle}>Experience</Text>
               {mappedData.experience.map((exp, index) => (
                 <View key={index} style={styles.experienceItem}>
                   <View style={styles.experienceHeader}>
@@ -206,22 +223,31 @@ const ClassicTemplate = ({ data = {} }) => {
                   <Text style={styles.institution}>
                     {edu.institution}, {edu.graduationYear}
                   </Text>
-                  {edu.description && (
-                    <Text style={styles.description}>{edu.description}</Text>
-                  )}
                 </View>
               ))}
             </View>
+
+            {/* Projects */}
+            {mappedData.projects.length > 0 && (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Projects</Text>
+                {mappedData.projects.slice(0, 3).map((project, index) => (
+                  <Text key={index} style={styles.listItem}>
+                    • {project}
+                  </Text>
+                ))}
+              </View>
+            )}
           </View>
 
           {/* Right Column */}
           <View style={styles.rightColumn}>
             {/* Skills */}
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Skills</Text>
+            <View style={styles.compactCard}>
+              <Text style={styles.rightSectionTitle}>Skills</Text>
               <View style={styles.skillsGrid}>
                 {mappedData.skills.map((skill, index) => (
-                  <Text key={index} style={styles.skillItem}>
+                  <Text key={index} style={styles.skillChip}>
                     {skill}
                   </Text>
                 ))}
@@ -230,38 +256,30 @@ const ClassicTemplate = ({ data = {} }) => {
 
             {/* Languages */}
             {mappedData.languages.length > 0 && (
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Languages</Text>
+              <View style={styles.compactCard}>
+                <Text style={styles.rightSectionTitle}>Languages</Text>
                 {mappedData.languages.map((language, index) => (
-                  <Text key={index} style={styles.listItem}>
-                    <Text style={styles.bullet}>•</Text>
-                    {language}
-                  </Text>
-                ))}
-              </View>
-            )}
-
-            {/* Projects */}
-            {mappedData.projects.length > 0 && (
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Projects</Text>
-                {mappedData.projects.slice(0, 4).map((project, index) => (
-                  <Text key={index} style={styles.listItem}>
-                    <Text style={styles.bullet}>•</Text>
-                    {project}
-                  </Text>
+                  <View key={index} style={styles.languageItem}>
+                    <Text style={styles.languageName}>
+                      {language.split('(')[0].trim()}
+                    </Text>
+                    <Text style={styles.languageLevel}>
+                      {language.includes('(')
+                        ? language.match(/\((.*?)\)/)?.[1] || 'Fluent'
+                        : 'Fluent'}
+                    </Text>
+                  </View>
                 ))}
               </View>
             )}
 
             {/* Certifications */}
             {mappedData.certifications.length > 0 && (
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Certifications</Text>
-                {mappedData.certifications.slice(0, 3).map((cert, index) => (
+              <View style={styles.compactCard}>
+                <Text style={styles.rightSectionTitle}>Certifications</Text>
+                {mappedData.certifications.slice(0, 4).map((cert, index) => (
                   <Text key={index} style={styles.listItem}>
-                    <Text style={styles.bullet}>•</Text>
-                    {cert}
+                    • {cert}
                   </Text>
                 ))}
               </View>
@@ -273,4 +291,4 @@ const ClassicTemplate = ({ data = {} }) => {
   );
 };
 
-export default ClassicTemplate;
+export default CompactTemplate;

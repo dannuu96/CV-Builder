@@ -1,355 +1,243 @@
-import React, { useState } from "react";
-import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
-import ClassicTemplate from "../components/Templates/ClassicTemplate";
-import ModernTemplate from "../components/Templates/ModernTemplate";
-import VibrantTemplate from "../components/Templates/VibrantTemplate";
-import ElegantTemplate from "../components/Templates/ElegantTemplate";
-import BoldTemplate from "../components/Templates/BoldTemplate";
-import SidebarTemplate from "../components/Templates/NewTemplate";
-import LivePreview from "../components/LivePreview";
-import Sidebar from "../components/Sidebar";
+import React, { useEffect } from 'react';
+import { useCVStore } from '../store/cvStore';
+import { useFormValidation } from '../hooks/useFormValidation';
+import { showToast } from '../components/UI/Toast';
+import StepWizard from '../components/StepWizard/StepWizard';
+import PersonalInfoStep from '../components/StepWizard/steps/PersonalInfoStep';
+import ExperienceStep from '../components/StepWizard/steps/ExperienceStep';
+import EducationStep from '../components/StepWizard/steps/EducationStep';
+import SkillsStep from '../components/StepWizard/steps/SkillsStep';
+import TemplateStep from '../components/StepWizard/steps/TemplateStep';
+import LivePreview from '../components/LivePreview';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaArrowLeft, FaEye, FaEyeSlash } from 'react-icons/fa';
 
-// Common recommendations for fields
-const RECOMMENDATIONS = {
-  skills: [
-    "JavaScript",
-    "React",
-    "Node.js",
-    "Python",
-    "HTML",
-    "CSS",
-    "SQL",
-    "Git",
-    "TypeScript",
-    "AWS",
-  ],
-  interests: [
-    "Machine Learning",
-    "Web Development",
-    "Mobile Development",
-    "Data Science",
-    "UI/UX Design",
-    "Cloud Computing",
-    "DevOps",
-    "Cybersecurity",
-  ],
-  languages: [
-    "English",
-    "Spanish",
-    "French",
-    "German",
-    "Chinese",
-    "Hindi",
-    "Arabic",
-    "Portuguese",
-  ],
-  courses: [
-    "Advanced JavaScript",
-    "React for Beginners",
-    "Python for Data Science",
-    "AWS Certified Solutions Architect",
-    "Machine Learning with TensorFlow",
-    "Full-Stack Web Development",
-    "DevOps Fundamentals",
-  ],
-  education: [
-    "Bachelor of Science in Computer Science",
-    "Master of Business Administration",
-    "Bachelor of Arts in Economics",
-    "Master of Science in Data Science",
-    "Bachelor of Engineering",
-  ],
-};
+// Fallback component for missing steps
+const FallbackStep = () => (
+  <div className="p-8 text-center">
+    <h2 className="text-xl font-semibold text-gray-900 mb-4">
+      Step Loading...
+    </h2>
+    <p className="text-gray-600">Please wait while we load this step.</p>
+  </div>
+);
 
-const INITIAL_FORM_DATA = {
-  personalInfo: {
-    fullName: "Muhammad Danyal",
-    jobTitle: "Front End Developer",
-    email: "danyalmohammad26@gmail.com",
-    phone: "03479167195",
-    address: "Gulshan Abad Dir Lower",
-    linkedin: "this is linkdin",
-    github: "this is github",
-
-    description: `for CSS properties, and gradients are not among the supported features. To achieve a gradient effect, you can use an image with the gradient as the background for the sidebar. Here's how you can modify your code file. Use the Image as Background: Replace the background: linear-gradient(...) wit`,
-
-    aboutMe: `a Gradient Image: Create an image with the gradient you want (e.g., using a tool like Photoshop, GIMP, or an online gradient generator). Save it as a PNG or JPEG`,
-  },
-  experience: [
-    { jobTitle: "Front End Developer", company: "Code Crush", duration: "1 year" },
-  ],
-  education: [
-    { degree: "Software Engineering", institution: "Uet Mardan", graduationYear: "2024" },
-  ],
-  lists: {
-    skills: ["React JS", "JavaScript", "HTML", "CSS", "Python"],
-    interests: ["Machine Learning", "Cricket", "Football", "This"],
-    languages: ["English", "Pashto", "Urdu", "Arabic"],
-    projects: ["This is a conference"],
-    courses: ["This", "That", "Flana", "Dimka"],
-  },
-};
+const STEPS = [
+  { id: 'personal', component: PersonalInfoStep || FallbackStep },
+  { id: 'experience', component: ExperienceStep || FallbackStep },
+  { id: 'education', component: EducationStep || FallbackStep },
+  { id: 'skills', component: SkillsStep || FallbackStep },
+  { id: 'template', component: TemplateStep || FallbackStep },
+];
 
 const CVForm = () => {
-  const [formData, setFormData] = useState(INITIAL_FORM_DATA);
-  const [isGenerated, setIsGenerated] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState("bold");
-  const [isViewing, setIsViewing] = useState(false);
-  const [errors, setErrors] = useState({});
+  const {
+    currentStep,
+    formData,
+    setFormData,
+    nextStep,
+    prevStep,
+    setStep,
+    isLoading,
+  } = useCVStore() || {};
 
-  const validateWordCount = (text, minWords) => {
-    const words = text.trim().split(/\s+/);
-    return words.length >= minWords;
-  };
+  const { validateStep, errors } = useFormValidation(formData || {});
+  const [showPreview, setShowPreview] = React.useState(false);
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth < 1024);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const { description, aboutMe } = formData.personalInfo;
-    const minWords = 10;
-
-    const newErrors = {};
-
-    if (!validateWordCount(description, minWords)) {
-      newErrors.description = "Description must contain at least 10 words.";
-    }
-
-    if (!validateWordCount(aboutMe, minWords)) {
-      newErrors.aboutMe = "About Me must contain at least 10 words.";
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    setErrors({});
-    setIsGenerated(true);
-  };
-
-  const handleChange = (category, field, value, index = null) => {
-    if (category === "personalInfo") {
-      setFormData((prev) => ({
-        ...prev,
-        personalInfo: { ...prev.personalInfo, [field]: value },
-      }));
-    } else if (category === "lists") {
-      const updatedList = [...formData.lists[field]];
-      if (index !== null) updatedList[index] = value;
-      setFormData((prev) => ({
-        ...prev,
-        lists: { ...prev.lists, [field]: updatedList },
-      }));
-    } else {
-      const updatedArray = [...formData[category]];
-      if (index !== null) updatedArray[index][field] = value;
-      setFormData((prev) => ({ ...prev, [category]: updatedArray }));
-    }
-  };
-
-  const addField = (category, field = null) => {
-    if (field) {
-      setFormData((prev) => ({
-        ...prev,
-        lists: { ...prev.lists, [field]: [...prev.lists[field], ""] },
-      }));
-    } else {
-      const newItem =
-        category === "education"
-          ? { degree: "", institution: "", graduationYear: "" }
-          : { jobTitle: "", company: "", duration: "" };
-      setFormData((prev) => ({
-        ...prev,
-        [category]: [...prev[category], newItem],
-      }));
-    }
-  };
-
-  const renderPersonalInfo = () => (
-    <div className="col-span-2 mb-6">
-      <h2 className="text-lg font-semibold mb-2">Personal Information</h2>
-      <div className="grid grid-cols-2 gap-4">
-        {Object.keys(formData.personalInfo).map((field) => (
-          <div key={field}>
-            <input
-              type="text"
-              className="w-full p-2 border border-gray-500 rounded-lg"
-              placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-              value={formData.personalInfo[field]}
-              onChange={(e) =>
-                handleChange("personalInfo", field, e.target.value)
-              }
-            />
-            {errors[field] && (
-              <p className="text-red-500 text-sm">{errors[field]}</p>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
-  const renderLists = () => (
-    <>
-      {Object.keys(formData.lists).map((listName) => (
-        <div key={listName} className="col-span-2 mb-6">
-          <h2 className="text-lg font-semibold mb-2">
-            {listName.charAt(0).toUpperCase() + listName.slice(1)}
-          </h2>
-          {formData.lists[listName].map((item, index) => (
-            <div key={index} className="mt-2">
-              <input
-                type="text"
-                className="w-full p-2 border border-gray-500 rounded-lg"
-                placeholder={`Enter ${listName}`}
-                value={item}
-                onChange={(e) =>
-                  handleChange("lists", listName, e.target.value, index)
-                }
-                list={`${listName}-options-${index}`} // Unique ID for datalist
-              />
-              <datalist id={`${listName}-options-${index}`}>
-                {RECOMMENDATIONS[listName]?.map((option, i) => (
-                  <option key={i} value={option} />
-                ))}
-              </datalist>
-            </div>
-          ))}
-          <button
-            type="button"
-            className="text-white bg-blue-700 rounded px-3 py-2 mt-2"
-            onClick={() => addField("lists", listName)}
-          >
-            Add More {listName}
-          </button>
-        </div>
-      ))}
-    </>
-  );
-
-  const renderComplexFields = () => (
-    <>
-      {["education", "experience"].map((category) => (
-        <div key={category} className="col-span-2 mb-6">
-          <h2 className="text-lg font-semibold mb-2">
-            {category.charAt(0).toUpperCase() + category.slice(1)}
-          </h2>
-          {formData[category].map((item, index) => (
-            <div key={index} className="mb-4 grid grid-cols-1 gap-2">
-              {Object.keys(item).map((field) => (
-                <div key={field}>
-                  <input
-                    type="text"
-                    className="w-full p-2 border border-gray-500 rounded-lg"
-                    placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-                    value={formData[category][index][field]}
-                    onChange={(e) =>
-                      handleChange(category, field, e.target.value, index)
-                    }
-                    list={`${category}-${field}-options-${index}`} // Unique ID for datalist
-                  />
-                  {field === "degree" && (
-                    <datalist id={`${category}-${field}-options-${index}`}>
-                      {RECOMMENDATIONS.education.map((option, i) => (
-                        <option key={i} value={option} />
-                      ))}
-                    </datalist>
-                  )}
-                </div>
-              ))}
-            </div>
-          ))}
-          <button
-            type="button"
-            className="text-white bg-blue-700 rounded px-3 py-2 mt-2"
-            onClick={() => addField(category)}
-          >
-            Add More {category}
-          </button>
-        </div>
-      ))}
-    </>
-  );
-
-  const renderTemplate = () => {
-    const templates = {
-      modern: ModernTemplate,
-      vibrant: VibrantTemplate,
-      elegant: ElegantTemplate,
-      bold: BoldTemplate,
-      classic: ClassicTemplate,
-      new: SidebarTemplate,
+  // Handle window resize for mobile responsiveness
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
     };
-    const SelectedTemplate = templates[selectedTemplate];
-    return <SelectedTemplate data={formData} />;
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Auto-save functionality
+  useEffect(() => {
+    if (!formData) return;
+
+    const autoSave = setInterval(() => {
+      localStorage.setItem(
+        'cvBuilder-autoSave',
+        JSON.stringify({
+          formData,
+          currentStep: currentStep || 0,
+          savedAt: new Date().toISOString(),
+        })
+      );
+    }, 30000); // Auto-save every 30 seconds
+
+    return () => clearInterval(autoSave);
+  }, [formData, currentStep]);
+
+  // Load auto-saved data on component mount
+  useEffect(() => {
+    if (!setFormData || !setStep) return;
+
+    const savedData = localStorage.getItem('cvBuilder-autoSave');
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        const savedTime = new Date(parsed.savedAt);
+        const now = new Date();
+        const timeDiff = now - savedTime;
+
+        // Only restore if saved within last 24 hours
+        if (timeDiff < 24 * 60 * 60 * 1000) {
+          setFormData(parsed.formData);
+          setStep(parsed.currentStep || 0);
+          showToast.info(
+            'Auto-saved data restored',
+            'Your previous work has been restored'
+          );
+        }
+      } catch (error) {
+        console.error('Error loading auto-saved data:', error);
+      }
+    }
+  }, [setFormData, setStep]);
+
+  const handleStepChange = async (direction) => {
+    if (direction === 'next') {
+      const currentStepName = STEPS[currentStep || 0]?.id;
+
+      if (validateStep) {
+        const isValid = await validateStep(currentStepName);
+
+        if (isValid) {
+          nextStep && nextStep();
+          showToast.success('Step completed!', 'Moving to next step');
+        } else {
+          showToast.error(
+            'Please fix the errors',
+            'Check the highlighted fields'
+          );
+        }
+      } else {
+        nextStep && nextStep();
+        showToast.success('Step completed!', 'Moving to next step');
+      }
+    } else {
+      prevStep && prevStep();
+    }
   };
+
+  const getCurrentStepComponent = () => {
+    const step = STEPS[currentStep || 0];
+    if (!step) {
+      return (
+        <div className="p-8 text-center">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            Welcome to CV Builder
+          </h2>
+          <p className="text-gray-600">
+            Let's start building your professional CV!
+          </p>
+        </div>
+      );
+    }
+
+    const StepComponent = step.component;
+    return <StepComponent />;
+  };
+
+  const togglePreview = () => {
+    setShowPreview(!showPreview);
+  };
+
+  if (isLoading || !formData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading CV Builder...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex min-h-screen   ">
-      <Sidebar
-        selectedTemplate={selectedTemplate}
-        setSelectedTemplate={setSelectedTemplate}
-      />
-      <div className="w-3/4 p-6 bg-gradient-to-r from-[#cacdcf] to-[#a2f1a2]">
-        <h1 className="text-2xl font-bold text-center mb-6">Create Your CV</h1>
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
-          {renderPersonalInfo()}
-          {renderComplexFields()}
-          {renderLists()}
+    <div className="min-h-screen bg-gray-50">
+      {/* Mobile Header */}
+      {isMobile && (
+        <div className="bg-white shadow-sm border-b px-4 py-3 flex items-center justify-between">
+          <button
+            onClick={() => window.history.back()}
+            className="flex items-center space-x-2 text-gray-600 hover:text-gray-800"
+          >
+            <FaArrowLeft size={16} />
+            <span>Back</span>
+          </button>
+          <h1 className="text-lg font-semibold">CV Builder</h1>
+          <button
+            onClick={togglePreview}
+            className="flex items-center space-x-2 text-blue-600 hover:text-blue-800"
+          >
+            {showPreview ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+            <span className="hidden sm:inline">Preview</span>
+          </button>
+        </div>
+      )}
 
-          <div className="col-span-2 flex justify-end gap-4 mt-6">
-            <button
-              type="submit"
-              className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700"
+      <div className="flex flex-col lg:flex-row min-h-screen">
+        {/* Main Content */}
+        <div className={`flex-1 ${isMobile ? 'pb-20' : ''}`}>
+          <StepWizard>{getCurrentStepComponent()}</StepWizard>
+        </div>
+
+        {/* Live Preview Sidebar */}
+        <AnimatePresence>
+          {(showPreview || !isMobile) && (
+            <motion.div
+              initial={isMobile ? { x: '100%' } : { opacity: 0 }}
+              animate={isMobile ? { x: 0 } : { opacity: 1 }}
+              exit={isMobile ? { x: '100%' } : { opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className={`${
+                isMobile
+                  ? 'fixed inset-0 z-50 bg-white'
+                  : 'w-1/3 border-l border-gray-200 bg-white'
+              } overflow-hidden`}
             >
-              Generate CV
-            </button>
-            {isGenerated && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => setIsViewing(true)}
-                  className="px-6 py-3 bg-green-600 text-white font-semibold rounded-full hover:bg-green-700"
-                >
-                  View CV
-                </button>
+              {isMobile && (
+                <div className="flex items-center justify-between p-4 border-b">
+                  <h2 className="text-lg font-semibold">Live Preview</h2>
+                  <button
+                    onClick={togglePreview}
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    <FaEyeSlash size={20} />
+                  </button>
+                </div>
+              )}
 
-                <PDFDownloadLink
-                  document={renderTemplate()}
-                  fileName="cv.pdf"
-                  className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700"
-                >
-                  Download CV
-                </PDFDownloadLink>
-              </>
-            )}
-          </div>
-        </form>
-
-        {/* View CV Modal */}
-        {isViewing && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white p-6 rounded-lg w-[80vw] h-[90vh] overflow-auto relative flex justify-center items-center">
-              <button
-                onClick={() => setIsViewing(false)}
-                className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-full"
-              >
-                Close
-              </button>
-              <div className="w-full h-full">
-                <PDFViewer width="100%" height="100%">
-                  {renderTemplate()}
-                </PDFViewer>
+              <div className="h-full overflow-auto">
+                <LivePreview
+                  formData={formData}
+                  selectedTemplate={
+                    useCVStore.getState()?.selectedTemplate || 'modern'
+                  }
+                />
               </div>
-            </div>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-      {/* Live Preview Section */}
-      <div className="w-1/2 p-6 bg-amber-50">
-        <h2 className="text-2xl font-bold text-center mb-6">Live Preview</h2>
-        <LivePreview formData={formData} selectedTemplate={selectedTemplate} />
-      </div>
+
+      {/* Mobile Preview Toggle Button */}
+      {isMobile && !showPreview && (
+        <motion.button
+          initial={{ y: 100 }}
+          animate={{ y: 0 }}
+          onClick={togglePreview}
+          className="fixed bottom-4 right-4 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors z-40"
+        >
+          <FaEye size={20} />
+        </motion.button>
+      )}
     </div>
   );
 };

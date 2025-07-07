@@ -7,84 +7,75 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: 'Helvetica',
     backgroundColor: '#ffffff',
-    padding: 40,
+    padding: 50,
   },
   header: {
-    textAlign: 'center',
     marginBottom: 30,
     paddingBottom: 20,
-    borderBottomWidth: 2,
-    borderBottomColor: '#000000',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
   },
   name: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: 'bold',
-    color: '#000000',
+    color: '#2c3e50',
     marginBottom: 8,
-    textTransform: 'uppercase',
-    letterSpacing: 2,
   },
   jobTitle: {
-    fontSize: 14,
-    color: '#333333',
+    fontSize: 16,
+    color: '#7f8c8d',
     marginBottom: 15,
-    fontStyle: 'italic',
   },
-  contactRow: {
+  contactInfo: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 15,
+    gap: 20,
     fontSize: 11,
-    color: '#333333',
+    color: '#34495e',
   },
   section: {
     marginBottom: 25,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 15,
+    color: '#2c3e50',
+    marginBottom: 12,
     textTransform: 'uppercase',
-    letterSpacing: 1,
-    borderBottomWidth: 1,
-    borderBottomColor: '#333333',
-    paddingBottom: 5,
+    letterSpacing: 0.5,
   },
-  description: {
+  text: {
     fontSize: 11,
-    color: '#333333',
-    lineHeight: 1.6,
-    textAlign: 'justify',
-    marginBottom: 15,
+    color: '#34495e',
+    lineHeight: 1.5,
   },
   experienceItem: {
     marginBottom: 20,
-    paddingBottom: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eeeeee',
   },
   experienceHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 5,
   },
   jobTitleText: {
     fontSize: 13,
     fontWeight: 'bold',
-    color: '#000000',
+    color: '#2c3e50',
   },
   company: {
     fontSize: 12,
-    color: '#333333',
+    color: '#7f8c8d',
     marginBottom: 8,
-    fontWeight: 'bold',
   },
   duration: {
     fontSize: 10,
-    color: '#666666',
+    color: '#95a5a6',
     fontStyle: 'italic',
+  },
+  description: {
+    fontSize: 11,
+    color: '#34495e',
+    lineHeight: 1.4,
   },
   educationItem: {
     marginBottom: 15,
@@ -92,60 +83,54 @@ const styles = StyleSheet.create({
   degree: {
     fontSize: 13,
     fontWeight: 'bold',
-    color: '#000000',
+    color: '#2c3e50',
   },
   institution: {
     fontSize: 11,
-    color: '#333333',
+    color: '#7f8c8d',
   },
   skillsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    gap: 8,
   },
   skillItem: {
     fontSize: 11,
-    color: '#333333',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    color: '#34495e',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
     borderWidth: 1,
-    borderColor: '#333333',
-    borderRadius: 0,
+    borderColor: '#bdc3c7',
+    borderRadius: 15,
   },
   listItem: {
     fontSize: 11,
-    color: '#333333',
-    marginBottom: 8,
-    paddingLeft: 15,
-  },
-  bullet: {
-    fontSize: 11,
-    color: '#333333',
-    marginRight: 8,
+    color: '#34495e',
+    marginBottom: 6,
   },
   twoColumn: {
     flexDirection: 'row',
     gap: 30,
   },
   leftColumn: {
-    width: '65%',
+    width: '70%',
   },
   rightColumn: {
-    width: '35%',
+    width: '30%',
   },
 });
 
-const ClassicTemplate = ({ data = {} }) => {
+const MinimalTemplate = ({ data = {} }) => {
   const mappedData = {
     fullName: data.personalInfo?.fullName || 'Your Name',
-    jobTitle: data.personalInfo?.jobTitle || 'Professional Title',
+    jobTitle: data.personalInfo?.jobTitle || 'Your Title',
     email: data.personalInfo?.email || 'email@example.com',
     phone: data.personalInfo?.phone || '(000) 000-0000',
     address: data.personalInfo?.address || 'Your Address',
     linkedin: data.personalInfo?.linkedin || 'linkedin.com/in/profile',
     description:
       data.personalInfo?.description ||
-      'Professional summary highlighting your experience and qualifications.',
+      'Professional summary highlighting your experience and goals.',
     skills: data.lists?.skills || [],
     experience: data.experience || [],
     education: data.education || [],
@@ -161,7 +146,7 @@ const ClassicTemplate = ({ data = {} }) => {
         <View style={styles.header}>
           <Text style={styles.name}>{mappedData.fullName}</Text>
           <Text style={styles.jobTitle}>{mappedData.jobTitle}</Text>
-          <View style={styles.contactRow}>
+          <View style={styles.contactInfo}>
             <Text>{mappedData.email}</Text>
             <Text>•</Text>
             <Text>{mappedData.phone}</Text>
@@ -172,19 +157,19 @@ const ClassicTemplate = ({ data = {} }) => {
           </View>
         </View>
 
-        {/* Professional Summary */}
+        {/* Summary */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Professional Summary</Text>
-          <Text style={styles.description}>{mappedData.description}</Text>
+          <Text style={styles.sectionTitle}>Summary</Text>
+          <Text style={styles.text}>{mappedData.description}</Text>
         </View>
 
         {/* Two Column Layout */}
         <View style={styles.twoColumn}>
           {/* Left Column */}
           <View style={styles.leftColumn}>
-            {/* Professional Experience */}
+            {/* Experience */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Professional Experience</Text>
+              <Text style={styles.sectionTitle}>Experience</Text>
               {mappedData.experience.map((exp, index) => (
                 <View key={index} style={styles.experienceItem}>
                   <View style={styles.experienceHeader}>
@@ -206,9 +191,6 @@ const ClassicTemplate = ({ data = {} }) => {
                   <Text style={styles.institution}>
                     {edu.institution}, {edu.graduationYear}
                   </Text>
-                  {edu.description && (
-                    <Text style={styles.description}>{edu.description}</Text>
-                  )}
                 </View>
               ))}
             </View>
@@ -234,7 +216,6 @@ const ClassicTemplate = ({ data = {} }) => {
                 <Text style={styles.sectionTitle}>Languages</Text>
                 {mappedData.languages.map((language, index) => (
                   <Text key={index} style={styles.listItem}>
-                    <Text style={styles.bullet}>•</Text>
                     {language}
                   </Text>
                 ))}
@@ -247,8 +228,7 @@ const ClassicTemplate = ({ data = {} }) => {
                 <Text style={styles.sectionTitle}>Projects</Text>
                 {mappedData.projects.slice(0, 4).map((project, index) => (
                   <Text key={index} style={styles.listItem}>
-                    <Text style={styles.bullet}>•</Text>
-                    {project}
+                    • {project}
                   </Text>
                 ))}
               </View>
@@ -260,8 +240,7 @@ const ClassicTemplate = ({ data = {} }) => {
                 <Text style={styles.sectionTitle}>Certifications</Text>
                 {mappedData.certifications.slice(0, 3).map((cert, index) => (
                   <Text key={index} style={styles.listItem}>
-                    <Text style={styles.bullet}>•</Text>
-                    {cert}
+                    • {cert}
                   </Text>
                 ))}
               </View>
@@ -273,4 +252,4 @@ const ClassicTemplate = ({ data = {} }) => {
   );
 };
 
-export default ClassicTemplate;
+export default MinimalTemplate;

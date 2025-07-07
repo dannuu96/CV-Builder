@@ -1,55 +1,94 @@
-import React from "react";
-import bold from "./assets/images/bold.png";
-import classic from "./assets/images/classic.png";
-import modern from "./assets/images/modern.png";
-import vibrant from "./assets/images/vibrant.png";
-import CreativeMinimalistTemplate from "./Templates/ElegantTemplate";
+import React from 'react';
 
 const Sidebar = ({ selectedTemplate, setSelectedTemplate }) => {
   const templates = [
-    { id: "bold", label: "Bold", image: bold },
-    { id: "classic", label: "Classic", image: classic },
-    { id: "modern", label: "Modern", image: modern },
-    { id: "vibrant", label: "Vibrant", image: vibrant },
-    { id: "elegant", label: "elegant", image: bold },
-    // { id: "Newww", label: "Newwwww", image: modern },
+    {
+      id: 'double-column',
+      label: 'Double Column',
+      description: 'Professional two-column layout',
+    },
+    {
+      id: 'ivy-league',
+      label: 'Ivy League',
+      description: 'Sophisticated academic styling',
+    },
+    {
+      id: 'contemporary',
+      label: 'Contemporary',
+      description: 'Modern business design',
+    },
+    {
+      id: 'elegant',
+      label: 'Elegant',
+      description: 'Refined gold-accented design',
+    },
+    {
+      id: 'creative',
+      label: 'Creative',
+      description: 'Bold pink creative layout',
+    },
+    {
+      id: 'timeline',
+      label: 'Timeline',
+      description: 'Chronological teal timeline',
+    },
+    {
+      id: 'minimal',
+      label: 'Minimal',
+      description: 'Clean and simple design',
+    },
+    {
+      id: 'classic',
+      label: 'Classic',
+      description: 'Traditional professional style',
+    },
+    {
+      id: 'compact',
+      label: 'Compact',
+      description: 'Space-efficient purple design',
+    },
+    {
+      id: 'stylish',
+      label: 'Stylish',
+      description: 'Modern with blue accents',
+    },
   ];
 
-  // Find selected template data
-  const selectedTemplateData = templates.find((t) => t.id === selectedTemplate);
-
   return (
-    <aside className="w-1/4 bg-gradient-to-br from-gray-900 to-amber-50 p-6 rounded-tr-xl shadow-2xl">
+    <aside className="w-1/4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 p-6 rounded-tr-xl shadow-2xl">
       <h2 className="text-2xl font-bold mb-6 text-white text-center">
         Choose Your Template
       </h2>
 
-      {/* Dropdown for selecting a template */}
-      <select
-        className="w-full p-3 rounded-lg border-2 border-transparent focus:border-white focus:ring-2 focus:ring-white transition duration-200 bg-white text-gray-800 font-medium"
-        value={selectedTemplate}
-        onChange={(e) => setSelectedTemplate(e.target.value)}
-      >
-        <option value="" disabled>
-          Select a template
-        </option>
+      {/* Template Grid */}
+      <div className="space-y-4">
         {templates.map((template) => (
-          <option key={template.id} value={template.id}>
-            {template.label}
-          </option>
+          <div
+            key={template.id}
+            onClick={() => setSelectedTemplate(template.id)}
+            className={`
+              p-4 rounded-lg cursor-pointer transition-all duration-300 transform
+              ${
+                selectedTemplate === template.id
+                  ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg scale-105'
+                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white hover:scale-105 hover:shadow-lg'
+              }
+            `}
+          >
+            <h3 className="font-bold text-lg mb-1">{template.label}</h3>
+            <p className="text-sm opacity-80">{template.description}</p>
+          </div>
         ))}
-      </select>
+      </div>
 
-      {/* Show selected template image */}
-      {selectedTemplateData && (
-        <div className="mt-6 border border-white p-4 rounded-lg shadow-lg transform hover:scale-105 transition duration-300">
-          <img
-            src={selectedTemplateData.image}
-            alt={selectedTemplateData.label}
-            className="w-full h-auto object-cover mb-4 rounded"
-          />
-          <p className="text-center text-lg font-semibold text-white">
-            {selectedTemplateData.label}
+      {/* Selected Template Info */}
+      {selectedTemplate && (
+        <div className="mt-6 p-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg shadow-lg">
+          <h3 className="text-white font-bold text-center mb-2">
+            Selected Template
+          </h3>
+          <p className="text-center text-blue-100 text-sm">
+            {templates.find((t) => t.id === selectedTemplate)?.label}
           </p>
         </div>
       )}
